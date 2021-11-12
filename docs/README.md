@@ -1,4 +1,4 @@
 ### Required documents
-- [Related papers](/papers)
+- [Related papers](/docs/papers)
 - Presentation link
 - Document link
