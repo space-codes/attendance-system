@@ -31,13 +31,12 @@ for img in people_dir:
         face = cv2.resize(face, required_size)
         encoded = face_encoder.predict(np.expand_dims(face, axis=0))[0]
         encode.append(encoded)
-if encode:
-    encode = np.sum(encode, axis=0)
-    encode = l2_normalizer.transform(np.expand_dims(encode, axis=0))[0]
-    encoding_dict[person_name] = encode
 
-
-
+    if encode:
+        encode = np.sum(encode, axis=0)
+        encode = l2_normalizer.transform(np.expand_dims(encode, axis=0))[0]
+        person_name = os.path.splitext(img)[0]
+        encoding_dict[person_name] = encode
 
 for key in encoding_dict.keys():
     print(key)
