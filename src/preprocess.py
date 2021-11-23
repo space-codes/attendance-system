@@ -8,7 +8,7 @@ from utils.utils import get_face, get_encode, l2_normalizer, normalize
 
 # hyper-parameters
 encoder_model = 'facenet_keras.h5'
-people_dir = 'image'
+people_dir = 'images'
 encodings_path = 'encodings.pkl'
 required_size = (160, 160)
 

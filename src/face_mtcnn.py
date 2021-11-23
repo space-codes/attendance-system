@@ -7,7 +7,7 @@ from mtcnn.mtcnn import MTCNN
 
 # from PIL import ImageGrab
 MODEL="cnn"
-path = 'image'
+path = 'images'
 images = []
 classNames = []
 myList = os.listdir(path)
