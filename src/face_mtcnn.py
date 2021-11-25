@@ -6,7 +6,6 @@ from datetime import datetime
 from mtcnn.mtcnn import MTCNN
 
 # from PIL import ImageGrab
-MODEL="cnn"
 path = 'images'
 images = []
 classNames = []
@@ -66,7 +65,6 @@ while True:
     imgS = cv2.resize(img, (0, 0), None, 0.25, 0.25)
     imgS = cv2.cvtColor(imgS, cv2.COLOR_BGR2RGB)
 
-    #facesCurFrame = face_recognition.face_locations(imgS,model=MODEL)
     results = face_detector.detect_faces(imgS)
     if results:
         res = max(results, key=lambda b: b['box'][2] * b['box'][3])#for collecting big face only
@@ -76,7 +74,7 @@ while True:
         encodesCurFrame = face_recognition.face_encodings(imgS, facesCurFrame)
 
         for encodeFace, faceLoc in zip(encodesCurFrame, facesCurFrame):
-            matches = face_recognition.compare_faces(encodeListKnown, encodeFace)
+            matches = face_recognition.compare_faces(encodeListKnown, encodeFace, tolerance=0.6)
             faceDis = face_recognition.face_distance(encodeListKnown, encodeFace)
             #print(faceDis)
             matchIndex = np.argmin(faceDis)
