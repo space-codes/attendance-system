@@ -11,6 +11,7 @@ encoder_model = 'facenet_keras.h5'
 people_dir = 'images'
 encodings_path = 'encodings.pkl'
 required_size = (160, 160)
+images=os.listdir(people_dir)
 
 face_detector = mtcnn.MTCNN()
 face_encoder = load_model(encoder_model)
@@ -19,9 +20,9 @@ encoding_dict = dict()
 
 encode= []
 
-for img in people_dir:
-    img = cv2.imread(img)
-    img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+for img in images:
+    img_file = cv2.imread(f'{people_dir}/{img}')
+    img_rgb = cv2.cvtColor(img_file, cv2.COLOR_BGR2RGB)
     results = face_detector.detect_faces(img_rgb)
     if results:
         res = max(results, key=lambda b: b['box'][2] * b['box'][3])
@@ -35,8 +36,9 @@ for img in people_dir:
     if encode:
         encode = np.sum(encode, axis=0)
         encode = l2_normalizer.transform(np.expand_dims(encode, axis=0))[0]
-        person_name = os.path.splitext(img)[0]
+        person_name = str(os.path.splitext(img)[0])
         encoding_dict[person_name] = encode
+        encode = []
 
 for key in encoding_dict.keys():
     print(key)

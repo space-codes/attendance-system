@@ -4,6 +4,7 @@ from datetime import datetime
 from keras.models import load_model
 from utils.utils import *
 
+
 def markAttendance(name):
     with open('Attendance.csv', 'r+') as f:
         myDataList = f.readlines()
@@ -15,6 +16,7 @@ def markAttendance(name):
             now = datetime.now()
             dtString = now.strftime('%H:%M:%S')
             f.writelines(f'\n{name},{dtString}')
+
 
 def recognize(img,
               detector,
@@ -64,7 +66,7 @@ if __name__ == '__main__':
     while True:
         success, img = cap.read()
         # img = captureScreen()
-        imgS = cv2.resize(img, (0, 0), None, 0.25, 0.25)
+        imgS = cv2.resize(img, (600, 500), None, 0.25, 0.25)
         imgS = cv2.cvtColor(imgS, cv2.COLOR_BGR2RGB)
         '''
         vc = cv2.VideoCapture(1)
