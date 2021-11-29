@@ -66,29 +66,26 @@ while True:
     imgS = cv2.cvtColor(imgS, cv2.COLOR_BGR2RGB)
 
     results = face_detector.detect_faces(imgS)
-    if results:
-        res = max(results, key=lambda b: b['box'][2] * b['box'][3])#for collecting big face only
-        face, facesCurFrame = get_face(imgS, res['box'])
-        #face, facesCurFrame = get_face(imgS, results[0]['box'])#if we want to collect all faces
-        #print(facesCurFrame)
-        encodesCurFrame = face_recognition.face_encodings(imgS, facesCurFrame)
+    for result in results:
+        if result:
+            face, facesCurFrame = get_face(imgS, result['box'])
+            encodesCurFrame = face_recognition.face_encodings(imgS, facesCurFrame)
 
-        for encodeFace, faceLoc in zip(encodesCurFrame, facesCurFrame):
-            matches = face_recognition.compare_faces(encodeListKnown, encodeFace, tolerance=0.6)
-            faceDis = face_recognition.face_distance(encodeListKnown, encodeFace)
-            #print(faceDis)
-            matchIndex = np.argmin(faceDis)
-            if faceDis[matchIndex] < 0.50:
-                name = classNames[matchIndex].upper()
-                markAttendance(name)
-            else:
-                name = 'Unknown'
-            # print(name)
-            y1, x2, y2, x1 = faceLoc
-            y1, x2, y2, x1 = y1 * 4, x2 * 4, y2 * 4, x1 * 4
-            cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
-            cv2.rectangle(img, (x1, y2 - 35), (x2, y2), (0, 255, 0), cv2.FILLED)
-            cv2.putText(img, name, (x1 + 6, y2 - 6), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
+            for encodeFace, faceLoc in zip(encodesCurFrame, facesCurFrame):
+                matches = face_recognition.compare_faces(encodeListKnown, encodeFace, tolerance=0.6)
+                faceDis = face_recognition.face_distance(encodeListKnown, encodeFace)
+                matchIndex = np.argmin(faceDis)
+                if faceDis[matchIndex] < 0.50:
+                    name = classNames[matchIndex].upper()
+                    markAttendance(name)
+                else:
+                    name = 'Unknown'
+                # print(name)
+                y1, x2, y2, x1 = faceLoc
+                y1, x2, y2, x1 = y1 * 4, x2 * 4, y2 * 4, x1 * 4
+                cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
+                cv2.rectangle(img, (x1, y2 - 35), (x2, y2), (0, 255, 0), cv2.FILLED)
+                cv2.putText(img, name, (x1 + 6, y2 - 6), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
 
     cv2.imshow('Webcam', img)
     if cv2.waitKey(1) & 0xFF == ord('q'):
