@@ -1,5 +1,4 @@
 from app import db
-import json
 
 
 class Student(db.Model):

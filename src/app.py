@@ -1,11 +1,8 @@
-from flask import Flask, Response, request, url_for, flash
+from flask import Flask, Response, flash
 from flask.templating import render_template
-from werkzeug.utils import redirect
 import cv2
 import os
-import numpy as np
 from dotenv import load_dotenv
-import base64
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import pickle
