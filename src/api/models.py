@@ -5,7 +5,7 @@ class Student(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     code = db.Column(db.Integer, unique=True, nullable=False)
     encoding = db.Column(db.LargeBinary, unique=False, nullable=False)
-    attendances = db.relationship('Attendance', backref='student', lazy=True)
+    attendances = db.relationship('Attendance', backref='student', lazy='subquery')
 
     def __repr__(self):
         return str({
