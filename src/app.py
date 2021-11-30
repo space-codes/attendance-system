@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import pickle
+from datetime import datetime, timedelta
+from sqlalchemy import desc
 
 from config import Config
 from core.face_recognizer import FaceRecognizer
@@ -22,7 +24,7 @@ app.config.from_object(Config)
 db.init_app(app)
 migrate = Migrate(app, db)
 
-from api.models import Student
+from api.models import Student, Attendance
 
 face_detector = FaceDetector()
 face_encoder = FaceEncoder()
@@ -31,6 +33,7 @@ face_recognizer = FaceRecognizer()
 camera = cv2.VideoCapture(0)
 
 print("All class sucessfully loaded!")
+
 
 def check_current_images():
     print("Loading all images from data folder")
@@ -77,7 +80,7 @@ def get_frame():
                         print(checked_in_student.code)
                         result = result + "," + checked_in_student.code
             except:
-                result = "Face not found. Please try again!"
+                print("[Error] Face not found. Please try again!")
             ret, buffer = cv2.imencode('.jpg', img=frame)
             frame_bytes = buffer.tobytes()
             yield (b'--frame\r\n'
@@ -104,6 +107,26 @@ def get_check_in_student(face_embedding):
     if max_similarity > 0.97:
         checked_in_student = students[max_similarity_index]
         print("student: {}".format(checked_in_student.code))
+        # Check for saved attended recorded
+        with app.app_context():
+            student = Student().query.filter_by(code=checked_in_student.code).first()
+            if student:
+                latest_attended = Attendance().query.filter_by(student_id=student.id).order_by(desc(Attendance.date)).first()
+                current_date = datetime.now()
+                if latest_attended is None:
+                    db.session.add(Attendance(
+                        date=current_date,
+                        student_id=student.id
+                    ))
+                    db.session.commit()
+                else:
+                    next_attendance = latest_attended.date + timedelta(hours=2)
+                    if next_attendance < current_date:
+                        db.session.add(Attendance(
+                            date=current_date,
+                            student_id=student.id
+                        ))
+                        db.session.commit()
         return checked_in_student
 
     return None
@@ -118,6 +141,14 @@ def index():
 @app.route('/video')
 def video():
     return Response(get_frame(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+
+@app.route('/attendances')
+def attendances():
+    with app.app_context():
+        students = Student().query.all()
+    days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    return render_template('attendances.html', students=students, days=days)
 
 
 if __name__ == "__main__":

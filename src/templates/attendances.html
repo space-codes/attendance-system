@@ -1,10 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "base.html" %} {% block title %} | Attendances {% endblock %} {% block
+body %}
+ <table class="container table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">Student Code</th>
+        {% for day in days%}
+            <th scope="col">{{ day }}</th>
+        {%endfor%}
+    </tr>
+  </thead>
+  <tbody>
+    {% for student in students%}
+        <tr>
+          <th scope="row">{{ student.code }}</th>
+            {% for day in days%}
+                <td>
+                    <ul>
+                        {% for attendance in student.attendances%}
+                            {% if attendance.date.strftime("%A") == day %}
+                                <li>Present at: {{ attendance.date.strftime("%m/%d/%Y, %H:%M:%S")}}</li>
+                            {% endif %}
+                        {%endfor%}
+                    </ul>
+                </td>
+            {%endfor%}
+        </tr>
+    {%endfor%}
+  </tbody>
+</table>
+{% endblock %}
