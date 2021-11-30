@@ -67,7 +67,6 @@ def get_frame():
         if not success:
             break
         else:
-            result = ""
             try:
                 extracted_faces = face_detector.extract_face(image_array=frame)
                 for extracted_face in extracted_faces:
@@ -75,10 +74,7 @@ def get_frame():
                     print(face_embedding)
                     checked_in_student = get_check_in_student(face_embedding)
                     if checked_in_student is None:
-                        result = "No student found, please add the student to database"
-                    else:
-                        print(checked_in_student.code)
-                        result = result + "," + checked_in_student.code
+                        print("No student found, please add the student to database")
             except:
                 print("[Error] Face not found. Please try again!")
             ret, buffer = cv2.imencode('.jpg', img=frame)

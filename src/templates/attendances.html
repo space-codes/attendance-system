@@ -1,5 +1,8 @@
 {% extends "base.html" %} {% block title %} | Attendances {% endblock %} {% block
 body %}
+<div class="d-flex justify-content-center my-3 text-muted">
+    <h1>Student attendances</h1>
+</div>
  <table class="container table table-striped">
   <thead>
     <tr>
@@ -18,7 +21,7 @@ body %}
                     <ul>
                         {% for attendance in student.attendances%}
                             {% if attendance.date.strftime("%A") == day %}
-                                <li>Present at: {{ attendance.date.strftime("%m/%d/%Y, %H:%M:%S")}}</li>
+                                <li>Presented at: {{ attendance.date.strftime("%m/%d/%Y, %H:%M:%S")}}</li>
                             {% endif %}
                         {%endfor%}
                     </ul>
