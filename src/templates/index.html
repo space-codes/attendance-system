@@ -18,7 +18,6 @@ body %}
   function requestActiveStudents() {
     fetch('/active_students').then(async (value) => {
         const activeStudents = await value.json();
-        console.log(activeStudents)
         const list = document.createElement('ul');
         list.setAttribute('class', 'list-group');
         for (let i = 0; i < activeStudents.length; i++) {

@@ -74,7 +74,6 @@ def get_frame():
                 extracted_faces = face_detector.extract_face(image_array=frame)
                 for extracted_face in extracted_faces:
                     face_embedding = face_encoder.get_embedding(image_array=extracted_face)
-                    print(face_embedding)
                     checked_in_student = get_check_in_student(face_embedding)
                     if checked_in_student is None:
                         print("No student found, please add the student to database")
@@ -103,8 +102,6 @@ def get_check_in_student(face_embedding):
     print("Maximum similarities: {}".format(max_similarity))
 
     max_similarity_index = similarities.index(max_similarity)
-
-    print(type(max_similarity > 0.99))
 
     if max_similarity > 0.97:
         checked_in_student = students[max_similarity_index]
