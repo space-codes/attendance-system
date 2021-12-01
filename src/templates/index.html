@@ -23,7 +23,7 @@ body %}
         for (let i = 0; i < activeStudents.length; i++) {
             const item = document.createElement('li');
             item.setAttribute('class', 'list-group-item');
-            item.appendChild(document.createTextNode(activeStudents[i]));
+            item.appendChild(document.createTextNode("Student Code: " + activeStudents[i]));
             list.appendChild(item);
         }
         document.getElementById('activeStudents').innerHTML = list.outerHTML;
