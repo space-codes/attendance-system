@@ -1,4 +1,6 @@
-from flask import Flask, Response, flash
+import json
+
+from flask import Flask, Response, flash, make_response
 from flask.templating import render_template
 import cv2
 import os
@@ -34,6 +36,7 @@ camera = cv2.VideoCapture(0)
 
 print("All class sucessfully loaded!")
 
+current_recognized_students = []
 
 def check_current_images():
     print("Loading all images from data folder")
@@ -75,6 +78,9 @@ def get_frame():
                     checked_in_student = get_check_in_student(face_embedding)
                     if checked_in_student is None:
                         print("No student found, please add the student to database")
+                    else:
+                        if checked_in_student.code not in current_recognized_students:
+                            current_recognized_students.append(checked_in_student.code)
             except:
                 print("[Error] Face not found. Please try again!")
             ret, buffer = cv2.imencode('.jpg', img=frame)
@@ -124,7 +130,6 @@ def get_check_in_student(face_embedding):
                         ))
                         db.session.commit()
         return checked_in_student
-
     return None
 
 
@@ -146,6 +151,12 @@ def attendances():
     days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
     return render_template('attendances.html', students=students, days=days)
 
+
+@app.route('/active_students')
+def active_students():
+    response = make_response(json.dumps(current_recognized_students))
+    response.content_type = 'application/json'
+    return response
 
 if __name__ == "__main__":
     app.run(debug=True)
