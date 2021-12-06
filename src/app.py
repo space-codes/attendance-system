@@ -16,6 +16,7 @@ from core.face_recognizer import FaceRecognizer
 from core.face_encoder import FaceEncoder
 from core.face_detector import FaceDetector
 
+
 load_dotenv()
 
 db = SQLAlchemy()
@@ -26,7 +27,7 @@ app.config.from_object(Config)
 db.init_app(app)
 migrate = Migrate(app, db)
 
-from api.models import Student, Attendance
+import api.models as entities
 
 face_detector = FaceDetector()
 face_encoder = FaceEncoder()
@@ -48,7 +49,7 @@ def check_current_images():
     for img in images:
         img_file = cv2.imread(f'{people_dir}/{img}')
         student_code = int(os.path.splitext(img)[0])
-        student = Student().query.filter_by(code=student_code).first()
+        student = entities.Student().query.filter_by(code=student_code).first()
 
         if student:
             flash('Student code has already existed', 'warning')
@@ -57,7 +58,7 @@ def check_current_images():
             face_image = face_detector.extract_face(image_array=img_file)[0]
             face_embedding = face_encoder.get_embedding(image_array=face_image)
             face_byte_array = pickle.dumps(face_embedding)
-            db.session.add(Student(
+            db.session.add(entities.Student(
                 code=student_code,
                 encoding=face_byte_array
             ))
@@ -90,7 +91,7 @@ def get_frame():
 
 def get_check_in_student(face_embedding):
     with app.app_context():
-        students = Student().query.all()
+        students = entities.Student().query.all()
 
     similarities = [face_recognizer.compare(
         face_embedding, pickle.loads(student.encoding)) for student in students]
@@ -108,12 +109,12 @@ def get_check_in_student(face_embedding):
         print("student: {}".format(checked_in_student.code))
         # Check for saved attended recorded
         with app.app_context():
-            student = Student().query.filter_by(code=checked_in_student.code).first()
+            student = entities.Student().query.filter_by(code=checked_in_student.code).first()
             if student:
-                latest_attended = Attendance().query.filter_by(student_id=student.id).order_by(desc(Attendance.date)).first()
+                latest_attended = entities.Attendance().query.filter_by(student_id=student.id).order_by(desc(entities.Attendance.date)).first()
                 current_date = datetime.now()
                 if latest_attended is None:
-                    db.session.add(Attendance(
+                    db.session.add(entities.Attendance(
                         date=current_date,
                         student_id=student.id
                     ))
@@ -121,7 +122,7 @@ def get_check_in_student(face_embedding):
                 else:
                     next_attendance = latest_attended.date + timedelta(hours=2)
                     if next_attendance < current_date:
-                        db.session.add(Attendance(
+                        db.session.add(entities.Attendance(
                             date=current_date,
                             student_id=student.id
                         ))
@@ -144,7 +145,7 @@ def video():
 @app.route('/attendances')
 def attendances():
     with app.app_context():
-        students = Student().query.all()
+        students = entities.Student().query.all()
     days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
     return render_template('attendances.html', students=students, days=days)
 
