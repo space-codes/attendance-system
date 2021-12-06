@@ -32,10 +32,9 @@ class FaceDetector:
             print("Hello")
 
         if len(faces) <= 0:
-            raise Exception(
-                "Faces is not properly detected, Please try again!")
-        
-        print("[MTCNN] Face is detected")
+            raise Exception("Faces is not properly detected, Please try again!")
+        else:
+            print("[MTCNN] Face is detected")
 
         extracted_faces = []
         for face in faces:
