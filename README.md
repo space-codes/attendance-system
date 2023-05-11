@@ -5,8 +5,8 @@ This project aims to create a facial recognition system that allows a doctor to 
 ## Installation
 To install this project, follow these steps:
 
-1. Clone the project repository using `git clone <repository-url>`
-2. Navigate to the project directory using `cd <project-folder>`
+1. Clone the project repository using `git clone https://github.com/space-codes/attendance-system.git`
+2. Navigate to the project directory using `cd attendance-system`
 3. Create a virtual environment using `python -m venv env`
 4. Activate the virtual environment using `source env/bin/activate` on macOS or Linux, or `.\env\Scripts\activate` on Windows.
 5. Install the required packages using pip install -r `src/requirements.txt`
